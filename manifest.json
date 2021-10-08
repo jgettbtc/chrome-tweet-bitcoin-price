@@ -1,9 +1,14 @@
 {
-    "name": "Tweet Price BTC",
-    "description": "Show the bitcoin price on the date a tweet was made",
+    "name": "Tweet Bitcoin Price",
+    "description": "Shows the USD price of Bitcoin on the date a tweet was made.",
     "author": "jgettbtc",
     "version": "1.0",
     "manifest_version": 3,
+    "icons": {
+        "16": "icon16.png",
+        "48": "icon48.png",
+        "128": "icon128.png"
+    },
     "content_scripts": [
         {
             "matches": ["https://*.twitter.com/*"],
