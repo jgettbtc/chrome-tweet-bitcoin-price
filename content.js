@@ -1,4 +1,3 @@
-
 window.addEventListener("DOMNodeInserted", (event) => {
     let links = event.relatedNode.querySelectorAll("div[dir='auto'] > a[role='link']");
 
