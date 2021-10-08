@@ -1,0 +1,19 @@
+{
+    "name": "Tweet Price BTC",
+    "description": "Show the bitcoin price on the date a tweet was made",
+    "author": "jgettbtc",
+    "version": "1.0",
+    "manifest_version": 3,
+    "content_scripts": [
+        {
+            "matches": ["https://*.twitter.com/*"],
+            "js": ["content.js"],
+            "run_at": "document_end"
+        }
+    ],
+    "permissions": [
+        "storage",
+        "activeTab",
+        "https://api.coingecko.com/*"
+    ]
+}
