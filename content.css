@@ -1,0 +1,23 @@
+.bitcoin-price {
+    color: orange;
+}
+
+.percent-change-increase {
+    color: green;
+}
+
+.percent-change-increase::before {
+    content: '\25b2';
+}
+
+.percent-change-decrease {
+    color: red;
+}
+
+.percent-change-decrease::before {
+    content: '\25bc';
+}
+
+.percent-change-nochange::before {
+    content: '\23f5';
+}

@@ -1,8 +1,8 @@
 {
     "name": "Tweet Bitcoin Price",
-    "description": "Shows the USD price of Bitcoin on the date a tweet was made.",
+    "description": "Shows the USD price of Bitcoin, and percent change, on the date a tweet was made.",
     "author": "jgettbtc",
-    "version": "1.0",
+    "version": "2.0",
     "manifest_version": 3,
     "icons": {
         "16": "icon16.png",
@@ -13,12 +13,15 @@
         {
             "matches": ["https://*.twitter.com/*"],
             "js": ["content.js"],
+            "css": ["content.css"],
             "run_at": "document_end"
         }
     ],
     "permissions": [
         "storage",
-        "activeTab",
+        "activeTab"
+    ],
+    "host_permissions": [
         "https://api.coingecko.com/*"
     ]
 }
