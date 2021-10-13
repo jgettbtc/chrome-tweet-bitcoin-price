@@ -13,6 +13,7 @@ chrome.storage.local.get(['btc_prices'], function(result) {
 
     // Always get today's price so we can use it to calculate percent change (and possibly display it).
     getBitcoinPrice(dateStringToday).then(priceToday => {
+        console.log('priceToday', priceToday);
         // Listen for changes to the DOM. Twitter uses a lot of ajax content loading.
         window.addEventListener("DOMNodeInserted", (event) => {
             // Find the date span. The query selector narrows down the avaiable elements.
@@ -30,9 +31,9 @@ chrome.storage.local.get(['btc_prices'], function(result) {
 
                     if (dateString === dateStringToday) {
                         // Tweet date is same as today so we can use today's price already retrieved, no additional API call needed.
-                        console.log("Using bitcoin price from today. [" + btcPrices[dateStringToday] + "]");
+                        console.log("Using bitcoin price from today. [" + priceToday + "]");
                         // Display the price.
-                        updateSpan(span, btcPrices[dateStringToday], priceToday);
+                        updateSpan(span, priceToday, priceToday);
                     } else if (btcPrices[dateString]) {
                         // The price was already retrieved at some point and saved in local storage, no additional API call needed.
                         console.log("Using bitcoin price from local storage. [" + btcPrices[dateString] + "]");
