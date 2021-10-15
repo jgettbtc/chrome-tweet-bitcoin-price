@@ -12,8 +12,7 @@ chrome.storage.local.get(['btc_prices'], function(result) {
     var dateStringToday = getDateString(now);
 
     // Always get today's price so we can use it to calculate percent change (and possibly display it).
-    getBitcoinPrice(dateStringToday).then(priceToday => {
-        console.log('priceToday', priceToday);
+    getBitcoinPriceCurrent().then(priceToday => {
         // Listen for changes to the DOM. Twitter uses a lot of ajax content loading.
         window.addEventListener("DOMNodeInserted", (event) => {
             // Find the date span. The query selector narrows down the avaiable elements.
@@ -62,34 +61,38 @@ chrome.storage.local.get(['btc_prices'], function(result) {
 
 // Inserts the bitcoin price and percentage change in the datetime span.
 function updateSpan(span, price, priceToday) {
-    let origText = span.innerText;
+    if (span.getAttribute("data-btcprice") === null){
+        let origText = span.innerText;
 
-    // Get a nicely formatted currency string (sorry, only US is supported at this time).
-    let usdFormatted = price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        // Get a nicely formatted currency string (sorry, only US is supported at this time).
+        let usdFormatted = price.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
-    // Get the percent change.
-    let percentChange = (priceToday - price) / price * 100;
+        // Get the percent change.
+        let percentChange = (priceToday - price) / price * 100;
 
-    let percentChangeClass = "";
-    let percentChangeFormatted = "";
+        let percentChangeClass = "";
+        let percentChangeFormatted = "";
 
-    // Determine the css class and formatted text.
-    if (percentChange == 0) {
-        percentChangeClass = "percent-change-nochange";
-        percentChangeFormatted = "0%";
-    } else if (percentChange > 0) {
-        percentChangeClass = "percent-change-increase";
-        percentChangeFormatted = percentChange.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '%';
-    } else {
-        percentChangeClass = "percent-change-decrease";
-        percentChangeFormatted = percentChange.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '%';
+        // Determine the css class and formatted text.
+        if (percentChange == 0) {
+            percentChangeClass = "percent-change-nochange";
+            percentChangeFormatted = "0%";
+        } else if (percentChange > 0) {
+            percentChangeClass = "percent-change-increase";
+            percentChangeFormatted = percentChange.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '%';
+        } else {
+            percentChangeClass = "percent-change-decrease";
+            percentChangeFormatted = percentChange.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + '%';
+        }
+
+        // Create a span for percentage change.
+        let percentChangeSpan = '<span class="' + percentChangeClass + '">' + percentChangeFormatted + '</span>';
+
+        // Set the span html.
+        span.innerHTML = origText + '&nbsp;(<span class="bitcoin-price">1&#8383;=' + usdFormatted + '</span>&nbsp;' + percentChangeSpan + ')';
+
+        span.setAttribute("data-btcprice", price);
     }
-
-    // Create a span for percentage change.
-    let percentChangeSpan = '<span class="' + percentChangeClass + '">' + percentChangeFormatted + '</span>';
-
-    // Set the span html.
-    span.innerHTML = origText + '&nbsp;(<span class="bitcoin-price">1&#8383;=' + usdFormatted + '</span>&nbsp;' + percentChangeSpan + ')';
 }
 
 // Formats a date as DD-MM-YYYY, which is required for the coingecko API.
@@ -107,6 +110,20 @@ function getBitcoinPrice(dateString) {
         fetch(url).then(r => r.text()).then(res => {
             let data = JSON.parse(res);
             let price = data.market_data.current_price.usd;
+            resolve(price);
+        }).catch(reject);
+    });
+}
+
+function getBitcoinPriceCurrent() {
+    return new Promise((resolve, reject) => {
+        let url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=false&include_24hr_vol=false&include_24hr_change=false&include_last_updated_at=true'
+
+        fetch(url).then(r => r.text()).then(res => {
+            let data = JSON.parse(res);
+            let price = data.bitcoin.usd;
+            let lastUpdatedAt = new Date(data.bitcoin.last_updated_at);
+            console.log('Current bitcoin price: ' + price + ', as of ' + lastUpdatedAt);
             resolve(price);
         }).catch(reject);
     });
