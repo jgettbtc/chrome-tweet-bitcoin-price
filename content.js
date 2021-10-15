@@ -122,7 +122,7 @@ function getBitcoinPriceCurrent() {
         fetch(url).then(r => r.text()).then(res => {
             let data = JSON.parse(res);
             let price = data.bitcoin.usd;
-            let lastUpdatedAt = new Date(data.bitcoin.last_updated_at);
+            let lastUpdatedAt = new Date(data.bitcoin.last_updated_at * 1000);
             console.log('Current bitcoin price: ' + price + ', as of ' + lastUpdatedAt);
             resolve(price);
         }).catch(reject);
